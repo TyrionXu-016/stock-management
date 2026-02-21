@@ -1,0 +1,36 @@
+<!--pages/login/login.wxml-->
+<view class="login-page">
+  <view class="brand">
+    <view class="logo">仓</view>
+    <text class="name">库存管理</text>
+    <text class="slogan">高效管理，一目了然</text>
+  </view>
+
+  <view class="content">
+    <view class="protocol">
+      <checkbox-group bindchange="onAgreeChange">
+        <label class="protocol-label">
+          <checkbox value="1" color="#0f766e" />
+          <text>我已阅读并同意</text>
+          <text class="link">《用户协议》</text>
+          <text>和</text>
+          <text class="link">《隐私政策》</text>
+        </label>
+      </checkbox-group>
+    </view>
+
+    <button
+      class="btn-login"
+      type="primary"
+      loading="{{loading}}"
+      disabled="{{loading}}"
+      bindtap="onLogin"
+    >
+      微信一键登录
+    </button>
+
+    <view class="tips">
+      <text>登录即表示同意相关协议，我们将妥善保护您的信息</text>
+    </view>
+  </view>
+</view>

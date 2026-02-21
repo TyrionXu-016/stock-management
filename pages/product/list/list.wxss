@@ -1,0 +1,10 @@
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+.tips {
+  color: #94a3b8;
+  font-size: 28rpx;
+}
