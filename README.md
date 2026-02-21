@@ -485,10 +485,10 @@ cd stockManager
 ```
 
 #### 2. 初始化数据库
-数据库连接信息见 [server_info.md](./server_info.md)。本地安装 mysql 客户端后执行：
+复制 `server_info.example.md` 为 `server_info.md`，填写数据库连接信息。本地安装 mysql 客户端后执行：
 
 ```bash
-mysql -h 114.55.139.240 -P 3306 -u stock_user -pStock@2024 < database/schema.sql
+mysql -h <Host> -P 3306 -u <Username> -p<Password> < database/schema.sql
 ```
 
 脚本会自动创建 `stock_manager` 库及所有表结构。

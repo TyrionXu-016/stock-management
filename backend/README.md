@@ -21,15 +21,15 @@ pip install -r requirements.txt
 
 ## 配置
 
-数据库连接信息见项目根目录 [server_info.md](../server_info.md)。
+数据库连接信息见项目根目录 `server_info.md`（由 `server_info.example.md` 复制后填写）。
 
-可选环境变量（或使用默认值）：
+环境变量：
 
-- `DB_HOST` - 默认 114.55.139.240
+- `DB_HOST` - 数据库主机
 - `DB_PORT` - 默认 3306
 - `DB_NAME` - 默认 stock_manager
-- `DB_USER` - 默认 stock_user
-- `DB_PASSWORD` - 默认 Stock@2024
+- `DB_USER` - 数据库用户名
+- `DB_PASSWORD` - 数据库密码
 
 ## 运行
 
