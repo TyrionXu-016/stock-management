@@ -1,0 +1,33 @@
+<view class="page" wx:if="{{check}}">
+  <view class="card">
+    <view class="row">
+      <text class="label">单号</text>
+      <text class="value">{{check.check_no}}</text>
+    </view>
+    <view class="row">
+      <text class="label">状态</text>
+      <text class="value">{{statusText}}</text>
+    </view>
+    <view class="row">
+      <text class="label">操作人</text>
+      <text class="value">{{check.operator_name}}</text>
+    </view>
+    <view class="row">
+      <text class="label">创建时间</text>
+      <text class="value">{{check.create_time}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">盘点明细</view>
+    <view class="item" wx:for="{{check.items}}" wx:key="id">
+      <view class="item-name">{{item.product_name}}</view>
+      <view class="item-row">账面 {{item.book_stock}} · 实际 {{item.actual_stock}} · 差异 <text class="diff {{item._diffClass}}">{{item.diff_quantity}}</text></view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{check.remark}}">
+    <view class="label">备注</view>
+    <view class="value">{{check.remark}}</view>
+  </view>
+</view>

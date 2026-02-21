@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="filters">
+    <picker mode="selector" range="{{typeOpts}}" range-key="label" value="{{typeIndex}}" bindchange="onTypeChange">
+      <view class="filter-item">{{typeLabel}}</view>
+    </picker>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y bindscrolltolower="onReachBottom">
+    <view class="list" wx:if="{{list.length > 0}}">
+      <view class="item" wx:for="{{list}}" wx:key="id">
+        <view class="item-header">
+          <text class="name">{{item.product_name}}</text>
+          <text class="type">{{item._typeText}}</text>
+        </view>
+        <view class="item-row">变动 {{item.change_quantity}} · {{item.before_stock}} → {{item.after_stock}}</view>
+        <view class="item-meta">{{item.create_time}} · {{item.operator_name}}</view>
+        <view class="item-meta" wx:if="{{item.remark}}">{{item.remark}}</view>
+      </view>
+    </view>
+    <view class="empty" wx:else>暂无变动记录</view>
+  </scroll-view>
+</view>

@@ -15,5 +15,6 @@ App({
 
   globalData: {
     userInfo: null,
+    pendingProductSelect: null,
   },
 })

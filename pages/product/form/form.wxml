@@ -1,0 +1,62 @@
+<view class="page">
+  <view class="form">
+    <view class="group">
+      <view class="label">商品名称 <text class="req">*</text></view>
+      <input class="input" placeholder="请输入商品名称" value="{{form.name}}" data-field="name" bindinput="onInput" />
+    </view>
+    <view class="group">
+      <view class="label">SKU 编码 <text class="req" wx:if="{{!isEdit}}">*</text></view>
+      <input
+        class="input"
+        placeholder="请输入 SKU"
+        value="{{form.sku_code}}"
+        data-field="sku_code"
+        bindinput="onInput"
+        disabled="{{isEdit}}"
+      />
+    </view>
+    <view class="group">
+      <view class="label">规格</view>
+      <input class="input" placeholder="如 500g/袋" value="{{form.spec}}" data-field="spec" bindinput="onInput" />
+    </view>
+    <view class="group">
+      <view class="label">分类</view>
+      <picker mode="selector" range="{{categories}}" range-key="name" value="{{categoryIndex}}" bindchange="onCategoryPick">
+        <view class="picker-value">{{categoryName || '请选择分类'}}</view>
+      </picker>
+    </view>
+    <view class="group">
+      <view class="label">品牌</view>
+      <input class="input" placeholder="请输入品牌" value="{{form.brand}}" data-field="brand" bindinput="onInput" />
+    </view>
+    <view class="group">
+      <view class="label">单位</view>
+      <picker mode="selector" range="{{units}}" value="{{unitIndex}}" bindchange="onUnitPick">
+        <view class="picker-value">{{form.unit || '件'}}</view>
+      </picker>
+    </view>
+    <view class="group">
+      <view class="label">进价</view>
+      <input class="input" type="digit" placeholder="0.00" value="{{form.purchase_price}}" data-field="purchase_price" bindinput="onInput" />
+    </view>
+    <view class="group">
+      <view class="label">售价</view>
+      <input class="input" type="digit" placeholder="0.00" value="{{form.sale_price}}" data-field="sale_price" bindinput="onInput" />
+    </view>
+    <view class="group">
+      <view class="label">最低库存</view>
+      <input class="input" type="number" placeholder="0" value="{{form.min_stock}}" data-field="min_stock" bindinput="onInput" />
+    </view>
+    <view class="group">
+      <view class="label">最高库存</view>
+      <input class="input" type="number" placeholder="0" value="{{form.max_stock}}" data-field="max_stock" bindinput="onInput" />
+    </view>
+  </view>
+
+  <view class="actions">
+    <button class="btn btn-cancel" bindtap="onCancel">取消</button>
+    <button class="btn btn-submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onSubmit">
+      {{submitText}}
+    </button>
+  </view>
+</view>

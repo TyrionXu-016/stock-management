@@ -1,1 +1,56 @@
-<view class="placeholder"><text class="tips">库存监控功能将在第四阶段开放</text></view>
+<view class="page">
+  <view class="summary">
+    <view class="stat">
+      <text class="stat-val">{{total}}</text>
+      <text class="stat-label">商品种类</text>
+    </view>
+    <view class="stat">
+      <text class="stat-val">{{totalStock}}</text>
+      <text class="stat-label">本页库存合计</text>
+    </view>
+  </view>
+
+  <view class="filters">
+    <view class="search-row">
+      <input class="search-input" placeholder="搜索名称/SKU" value="{{keyword}}" bindinput="onSearchInput" bindconfirm="onSearch" />
+      <view class="search-btn" bindtap="onSearch">搜索</view>
+    </view>
+    <view class="filter-row">
+      <picker mode="selector" range="{{categories}}" range-key="name" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view class="filter-item">{{categoryName}}</view>
+      </picker>
+      <view class="switch-row">
+        <text>仅预警</text>
+        <switch checked="{{isWarningOnly}}" bindchange="onWarningSwitch" color="#0f766e" />
+      </view>
+    </view>
+  </view>
+
+  <view class="links">
+    <view class="link" bindtap="onWarning">库存预警</view>
+    <view class="link" bindtap="onCheck">库存盘点</view>
+    <view class="link" bindtap="onLogs">变动记录</view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y bindscrolltolower="onReachBottom">
+    <view class="list" wx:if="{{list.length > 0}}">
+      <view
+        wx:for="{{list}}"
+        wx:key="product_id"
+        class="item {{item._warnClass}}"
+        data-item="{{item}}"
+        bindtap="onItemTap"
+      >
+        <view class="item-main">
+          <text class="name">{{item.product_name}}</text>
+          <text class="meta">SKU: {{item.sku_code}} · {{item.unit}}</text>
+        </view>
+        <view class="item-right">
+          <text class="stock {{item._warnClass}}">{{item._stockText}} / {{item.min_stock}}</text>
+          <text class="warn-tag" wx:if="{{item.is_warning}}">预警</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:else>暂无库存数据</view>
+  </scroll-view>
+</view>

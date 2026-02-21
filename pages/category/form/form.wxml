@@ -1,0 +1,25 @@
+<view class="page">
+  <view class="form">
+    <view class="group">
+      <view class="label">分类名称 <text class="req">*</text></view>
+      <input class="input" placeholder="请输入分类名称" value="{{form.name}}" data-field="name" bindinput="onInput" />
+    </view>
+    <view class="group" wx:if="{{!isEdit}}">
+      <view class="label">父分类</view>
+      <picker mode="selector" range="{{parentCategories}}" range-key="name" value="{{parentIndex}}" bindchange="onParentPick">
+        <view class="picker-value">{{parentName || '请选择'}}</view>
+      </picker>
+    </view>
+    <view class="group">
+      <view class="label">排序</view>
+      <input class="input" type="number" placeholder="0" value="{{form.sort}}" data-field="sort" bindinput="onInput" />
+    </view>
+  </view>
+
+  <view class="actions">
+    <button class="btn btn-cancel" bindtap="onCancel">取消</button>
+    <button class="btn btn-submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onSubmit">
+      {{submitText}}
+    </button>
+  </view>
+</view>

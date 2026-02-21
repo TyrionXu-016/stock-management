@@ -1,0 +1,17 @@
+<view class="page">
+  <view class="header">
+    <text class="total">共 {{total}} 单</text>
+    <view class="add-btn" bindtap="onAdd">新建盘点</view>
+  </view>
+
+  <view class="list" wx:if="{{list.length > 0}}">
+    <view class="item" wx:for="{{list}}" wx:key="id" data-item="{{item}}" bindtap="onItemTap">
+      <view class="row">
+        <text class="no">{{item.check_no}}</text>
+        <text class="status">{{item._statusText}}</text>
+      </view>
+      <view class="row meta">{{item.create_time}}</view>
+    </view>
+  </view>
+  <view class="empty" wx:else>暂无盘点单，点击新建</view>
+</view>

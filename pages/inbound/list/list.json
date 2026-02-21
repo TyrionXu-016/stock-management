@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "出入库"
+  "navigationBarTitleText": "出入库",
+  "enablePullDownRefresh": true
 }

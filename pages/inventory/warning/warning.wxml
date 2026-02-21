@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="summary" wx:if="{{list.length > 0}}">
+    <text class="count">{{list.length}}</text>
+    <text class="label">种商品库存预警</text>
+  </view>
+
+  <view class="list" wx:if="{{list.length > 0}}">
+    <view class="item" wx:for="{{list}}" wx:key="product_id" data-item="{{item}}" bindtap="onItemTap">
+      <view class="item-main">
+        <text class="name">{{item.product_name}}</text>
+        <text class="meta">SKU: {{item.sku_code}} · {{item.unit}}</text>
+        <view class="nums">
+          <text class="stock">当前 {{item.stock}}</text>
+          <text class="min">预警值 {{item.min_stock}}</text>
+          <text class="gap">缺口 {{item._gap}}</text>
+        </view>
+      </view>
+      <view class="item-actions">
+        <view class="btn-replenish" catchtap="onReplenish" data-item="{{item}}">补货</view>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:else>
+    <text>暂无预警商品</text>
+  </view>
+</view>

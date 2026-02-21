@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="header">
+    <text class="title">分类管理</text>
+    <view class="add-btn" bindtap="onAdd">+ 添加分类</view>
+  </view>
+
+  <view class="list" wx:if="{{list.length > 0}}">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="item"
+      style="padding-left: {{24 + item._level * 40}}rpx"
+    >
+      <view class="info">
+        <text class="name">{{item.name}}</text>
+        <text class="sort">排序: {{item._sort}}</text>
+      </view>
+      <view class="actions" wx:if="{{isAdmin}}">
+        <text class="action" bindtap="onEdit" data-item="{{item}}">编辑</text>
+        <text class="action danger" bindtap="onDelete" data-item="{{item}}">删除</text>
+      </view>
+    </view>
+  </view>
+  <view class="empty" wx:else>
+    <text>暂无分类，点击添加</text>
+  </view>
+</view>

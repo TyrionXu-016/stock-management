@@ -1,3 +1,48 @@
-<view class="placeholder">
-  <text class="tips">出入库管理功能将在第三阶段开放</text>
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{tabActiveInbound}}" data-tab="inbound" bindtap="onTabChange">入库</view>
+    <view class="tab {{tabActiveOutbound}}" data-tab="outbound" bindtap="onTabChange">出库</view>
+  </view>
+
+  <view class="filters">
+    <picker mode="selector" range="{{statusOpts}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+      <view class="filter-item">{{statusLabel}}</view>
+    </picker>
+  </view>
+
+  <view class="header-row">
+    <text class="total">共 {{total}} 单</text>
+    <view class="add-btn" bindtap="onAdd">{{addBtnText}}</view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y bindscrolltolower="onReachBottom">
+    <view class="list" wx:if="{{list.length > 0}}">
+      <view
+        wx:for="{{list}}"
+        wx:key="id"
+        class="order-card"
+        data-item="{{item}}"
+        bindtap="onItemTap"
+      >
+        <view class="row">
+          <text class="no">{{item.order_no}}</text>
+          <text class="status status-{{item.status}}">{{item._statusText}}</text>
+        </view>
+        <view class="row">
+          <text class="label">{{item._receiverLabel}}</text>
+          <text class="value">{{item._receiverOrSupplier}}</text>
+        </view>
+        <view class="row">
+          <text class="label">数量</text>
+          <text class="value">{{item.total_quantity}} 件</text>
+        </view>
+        <view class="row meta">
+          <text class="time">{{item.create_time}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:else>
+      <text>{{emptyText}}</text>
+    </view>
+  </scroll-view>
 </view>

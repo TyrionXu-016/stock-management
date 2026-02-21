@@ -1,3 +1,57 @@
-<view class="placeholder">
-  <text class="tips">商品管理功能将在第二阶段开放</text>
+<view class="page">
+  <view class="search-bar">
+    <view class="search-inner">
+      <input
+        class="search-input"
+        placeholder="搜索名称/SKU"
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+      />
+      <view class="search-btn" bindtap="onSearch">搜索</view>
+    </view>
+  </view>
+
+  <view class="filters">
+    <picker mode="selector" range="{{categories}}" range-key="name" value="{{categoryIndex}}" bindchange="onCategoryChange">
+      <view class="filter-item">
+        {{categoryName || '全部分类'}}
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+    <picker mode="selector" range="{{statusOpts}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+      <view class="filter-item">
+        {{statusLabel || '全部状态'}}
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <view class="header-row">
+    <view class="left">
+      <text class="total">共 {{total}} 件</text>
+      <text class="category-link" bindtap="onCategoryManage">分类管理</text>
+    </view>
+    <view class="add-btn" bindtap="onAdd">+ 添加</view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    bindscrolltolower="onReachBottom"
+  >
+    <view class="list" wx:if="{{list.length > 0}}">
+      <product-card
+        wx:for="{{list}}"
+        wx:key="id"
+        product="{{item}}"
+        bind:tap="onCardTap"
+      />
+    </view>
+    <view class="empty" wx:else>
+      <text>暂无商品，点击右上角添加</text>
+    </view>
+  </scroll-view>
 </view>

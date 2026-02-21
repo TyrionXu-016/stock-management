@@ -1,0 +1,47 @@
+<view class="page" wx:if="{{order}}">
+  <view class="card">
+    <view class="row">
+      <text class="label">单号</text>
+      <text class="value">{{order.order_no}}</text>
+    </view>
+    <view class="row">
+      <text class="label">供应商</text>
+      <text class="value">{{order.supplier}}</text>
+    </view>
+    <view class="row">
+      <text class="label">操作人</text>
+      <text class="value">{{order.operator_name}}</text>
+    </view>
+    <view class="row">
+      <text class="label">状态</text>
+      <text class="value status-{{order.status}}">{{statusText}}</text>
+    </view>
+    <view class="row">
+      <text class="label">创建时间</text>
+      <text class="value">{{order.create_time}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">商品明细</view>
+    <view class="item" wx:for="{{order.items}}" wx:key="id">
+      <view class="item-name">{{item.product_name}}</view>
+      <view class="item-row">数量 {{item.quantity}} × ¥{{item.unit_price}} = ¥{{item.total_price}}</view>
+      <view class="item-row" wx:if="{{item.batch_no}}">批次号 {{item.batch_no}}</view>
+    </view>
+    <view class="summary">
+      <text>总数量 {{order.total_quantity}} 件</text>
+      <text>总金额 ¥{{order.total_amount}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{order.remark}}">
+    <view class="label">备注</view>
+    <view class="value">{{order.remark}}</view>
+  </view>
+
+  <view class="actions" wx:if="{{showApproveActions}}">
+    <button class="btn btn-pass" bindtap="onApprove">通过</button>
+    <button class="btn btn-reject" bindtap="onReject">拒绝</button>
+  </view>
+</view>

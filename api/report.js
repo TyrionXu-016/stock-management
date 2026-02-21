@@ -1,18 +1,22 @@
 /**
  * 报表相关 API
  */
-const request = require('../utils/request')
+const { request } = require('../utils/request')
 
-/**
- * 获取报表概览
- * @param {Object} [params] - { start_date, end_date }
- */
 function getOverview(params = {}) {
-  return request({
-    url: '/api/report/overview',
-    method: 'GET',
-    data: params,
-  })
+  return request({ url: '/api/report/overview', method: 'GET', data: params })
 }
 
-module.exports = { getOverview }
+function getInbound(params = {}) {
+  return request({ url: '/api/report/inbound', method: 'GET', data: params })
+}
+
+function getOutbound(params = {}) {
+  return request({ url: '/api/report/outbound', method: 'GET', data: params })
+}
+
+function getTurnover(params = {}) {
+  return request({ url: '/api/report/turnover', method: 'GET', data: params })
+}
+
+module.exports = { getOverview, getInbound, getOutbound, getTurnover }

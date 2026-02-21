@@ -1,7 +1,7 @@
 /**
  * 用户相关 API
  */
-const request = require('../utils/request')
+const { request } = require('../utils/request')
 
 /**
  * 获取当前用户信息

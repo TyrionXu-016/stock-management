@@ -1,0 +1,14 @@
+<view class="page">
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索名称/SKU" value="{{keyword}}" bindinput="onSearchInput" bindconfirm="onSearch" />
+    <view class="search-btn" bindtap="onSearch">搜索</view>
+  </view>
+  <view class="list">
+    <view wx:for="{{list}}" wx:key="id" bindtap="onSelect" data-product="{{item}}">
+  <product-card product="{{item}}" />
+</view>
+  </view>
+  <view class="empty" wx:if="{{list.length === 0 && !loading}}">
+    <text>暂无商品</text>
+  </view>
+</view>

@@ -31,13 +31,20 @@ Page({
 
     this.setData({ loading: true })
     try {
-      const { code } = await new Promise((resolve, reject) => {
-        wx.login({
-          success: resolve,
-          fail: reject,
-        })
-      })
-      const { token, user } = await authApi.login(code)
+      const [loginRes, profileRes] = await Promise.all([
+        new Promise((resolve, reject) =>
+          wx.login({ success: resolve, fail: reject })
+        ),
+        new Promise(resolve =>
+          wx.getUserProfile({
+            desc: '用于完善会员资料',
+            success: res => resolve(res.userInfo),
+            fail: () => resolve(null),
+          })
+        ),
+      ])
+      const { code } = loginRes
+      const { token, user } = await authApi.login(code, profileRes)
       auth.saveLoginData(token, user)
       store.setUser(user)
       wx.showToast({ title: '登录成功', icon: 'success' })

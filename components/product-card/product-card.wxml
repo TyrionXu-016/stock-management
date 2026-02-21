@@ -1,0 +1,17 @@
+<view class="product-card {{cardClass}}" bindtap="onTap">
+  <view class="main">
+    <view class="name">{{product.name || '-'}}</view>
+    <view class="meta">
+      <text class="sku">SKU: {{product.sku_code || '-'}}</text>
+      <text class="category" wx:if="{{product.category_name}}">{{product.category_name}}</text>
+    </view>
+  </view>
+  <view class="right">
+    <view class="stock {{stockClass}}">
+      {{stockText}} {{product.unit || '件'}}
+    </view>
+    <view class="status {{statusClass}}">
+      {{statusText}}
+    </view>
+  </view>
+</view>

@@ -1,1 +1,39 @@
-<view class="placeholder"><text class="tips">报表统计功能将在第五阶段开放</text></view>
+<view class="page">
+  <view class="date-bar">
+    <picker mode="date" value="{{startDate}}" bindchange="onDateStartChange">
+      <view class="date-item">{{startDate}}</view>
+    </picker>
+    <text class="sep">至</text>
+    <picker mode="date" value="{{endDate}}" bindchange="onDateEndChange">
+      <view class="date-item">{{endDate}}</view>
+    </picker>
+  </view>
+
+  <view class="stats">
+    <view class="stat-row">
+      <view class="stat-card"><text class="val">{{stats.product_count}}</text><text class="lbl">商品数</text></view>
+      <view class="stat-card"><text class="val">{{stats.total_stock_value}}</text><text class="lbl">库存总值</text></view>
+    </view>
+    <view class="stat-row">
+      <view class="stat-card"><text class="val">{{stats.inbound_count}}</text><text class="lbl">入库单数</text></view>
+      <view class="stat-card"><text class="val">{{stats.inbound_quantity}}</text><text class="lbl">入库数量</text></view>
+    </view>
+    <view class="stat-row">
+      <view class="stat-card"><text class="val">{{stats.outbound_count}}</text><text class="lbl">出库单数</text></view>
+      <view class="stat-card"><text class="val">{{stats.outbound_quantity}}</text><text class="lbl">出库数量</text></view>
+    </view>
+    <view class="stat-row">
+      <view class="stat-card warn"><text class="val">{{stats.warning_count}}</text><text class="lbl">预警数</text></view>
+      <view class="stat-card"><text class="val">{{stats.pending_inbound_count}}</text><text class="lbl">待审批入库</text></view>
+    </view>
+    <view class="stat-row">
+      <view class="stat-card"><text class="val">{{stats.pending_outbound_count}}</text><text class="lbl">待审批出库</text></view>
+    </view>
+  </view>
+
+  <view class="links">
+    <view class="link" bindtap="onInbound">入库统计</view>
+    <view class="link" bindtap="onOutbound">出库统计</view>
+    <view class="link" bindtap="onTurnover">周转率</view>
+  </view>
+</view>

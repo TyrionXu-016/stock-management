@@ -1,0 +1,12 @@
+page { background: #f1f5f9; }
+.page { padding: 24rpx; }
+.form { background: #fff; border-radius: 20rpx; padding: 0 32rpx; margin-bottom: 32rpx; box-shadow: 0 4rpx 16rpx rgba(15,118,110,0.06); }
+.group { padding: 28rpx 0; border-bottom: 1rpx solid #f1f5f9; }
+.group:last-child { border-bottom: none; }
+.label { font-size: 26rpx; color: #64748b; margin-bottom: 12rpx; }
+.avatar-btn { padding: 0; background: none; border: none; }
+.avatar-btn::after { border: none; }
+.avatar { display: block; width: 120rpx; height: 120rpx; border-radius: 50%; background: #f1f5f9; }
+.avatar.placeholder { display: flex; align-items: center; justify-content: center; font-size: 26rpx; color: #94a3b8; }
+.input { font-size: 30rpx; color: #1e293b; }
+.btn-submit { background: #0f766e; color: #fff; border: none; border-radius: 48rpx; height: 88rpx; line-height: 88rpx; font-size: 30rpx; }

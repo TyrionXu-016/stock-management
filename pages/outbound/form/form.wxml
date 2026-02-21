@@ -1,0 +1,47 @@
+<view class="page">
+  <view class="form">
+    <view class="group">
+      <view class="label">收货人/客户</view>
+      <input class="input" placeholder="请输入收货人或客户" value="{{receiver}}" bindinput="onReceiverInput" />
+    </view>
+    <view class="group">
+      <view class="label">备注</view>
+      <input class="input" placeholder="选填" value="{{remark}}" bindinput="onRemarkInput" />
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="title">商品明细</text>
+      <view class="add-btn" bindtap="onAddProduct">+ 添加商品</view>
+    </view>
+    <view class="item-list" wx:if="{{items.length > 0}}">
+      <view class="item" wx:for="{{items}}" wx:key="product_id">
+        <view class="item-name">{{item.product_name}} <text class="stock-hint">库存 {{item.stock}}</text></view>
+        <view class="item-row">
+          <text>数量</text>
+          <input type="number" value="{{item.quantity}}" data-field="quantity" data-index="{{index}}" bindinput="onItemInput" />
+        </view>
+        <view class="item-row">
+          <text>单价</text>
+          <input type="digit" value="{{item.unit_price}}" data-field="unit_price" data-index="{{index}}" bindinput="onItemInput" />
+        </view>
+        <view class="item-footer">
+          <text class="subtotal">小计 ¥{{item._total}}</text>
+          <text class="remove" bindtap="onRemoveItem" data-index="{{index}}">删除</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:else>点击上方添加商品</view>
+  </view>
+
+  <view class="summary-bar">
+    <text>总数量 {{totalQuantity}} 件</text>
+    <text>总金额 ¥{{totalAmount}}</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn btn-cancel" bindtap="onCancel">取消</button>
+    <button class="btn btn-submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onSubmit">提交</button>
+  </view>
+</view>

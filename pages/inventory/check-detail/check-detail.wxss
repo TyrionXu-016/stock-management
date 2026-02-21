@@ -1,0 +1,14 @@
+page { background: #f1f5f9; }
+.page { padding: 24rpx; }
+.card { background: #fff; border-radius: 20rpx; padding: 32rpx; margin-bottom: 24rpx; box-shadow: 0 4rpx 16rpx rgba(15,118,110,0.06); }
+.card-title { font-size: 30rpx; font-weight: 600; color: #1e293b; margin-bottom: 24rpx; }
+.row { display: flex; justify-content: space-between; padding: 16rpx 0; font-size: 28rpx; }
+.label { color: #64748b; }
+.value { color: #1e293b; }
+.item { padding: 20rpx 0; border-bottom: 1rpx solid #f1f5f9; }
+.item:last-of-type { border-bottom: none; }
+.item-name { font-weight: 500; color: #1e293b; margin-bottom: 8rpx; }
+.item-row { font-size: 26rpx; color: #64748b; }
+.item-row .diff { font-weight: 500; }
+.item-row .diff.gain { color: #059669; }
+.item-row .diff.loss { color: #dc2626; }

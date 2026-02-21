@@ -1,10 +1,101 @@
-.placeholder {
+/* pages/product/list/list.wxss */
+page {
+  background: #f1f5f9;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 32rpx;
+}
+
+.search-bar {
+  background: #fff;
+  padding: 20rpx 24rpx;
+}
+
+.search-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 60vh;
+  background: #f1f5f9;
+  border-radius: 40rpx;
+  padding: 0 24rpx;
 }
-.tips {
-  color: #94a3b8;
+
+.search-input {
+  flex: 1;
+  height: 72rpx;
   font-size: 28rpx;
+}
+
+.search-btn {
+  font-size: 28rpx;
+  color: #0f766e;
+  font-weight: 500;
+  padding-left: 24rpx;
+}
+
+.filters {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 24rpx;
+  background: #fff;
+}
+
+.filter-item {
+  flex: 1;
+  font-size: 26rpx;
+  color: #64748b;
+  padding: 16rpx 24rpx;
+  background: #f8fafc;
+  border-radius: 12rpx;
+}
+
+.arrow {
+  font-size: 20rpx;
+  margin-left: 8rpx;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.total {
+  font-size: 26rpx;
+  color: #64748b;
+}
+
+.category-link {
+  font-size: 26rpx;
+  color: #0f766e;
+}
+
+.add-btn {
+  font-size: 28rpx;
+  color: #0f766e;
+  font-weight: 500;
+}
+
+.list-scroll {
+  height: calc(100vh - 320rpx);
+  padding: 0 24rpx;
+}
+
+.list {
+  padding-bottom: 40rpx;
+}
+
+.empty {
+  padding: 120rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  color: #94a3b8;
 }

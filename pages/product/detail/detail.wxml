@@ -1,0 +1,68 @@
+<view class="page" wx:if="{{product}}">
+  <view class="card info-card">
+    <view class="card-title">基础信息</view>
+    <view class="row">
+      <text class="label">名称</text>
+      <text class="value">{{product.name}}</text>
+    </view>
+    <view class="row">
+      <text class="label">SKU</text>
+      <text class="value">{{product.sku_code}}</text>
+    </view>
+    <view class="row">
+      <text class="label">规格</text>
+      <text class="value">{{product.spec || '-'}}</text>
+    </view>
+    <view class="row">
+      <text class="label">分类</text>
+      <text class="value">{{product.category_name || '-'}}</text>
+    </view>
+    <view class="row">
+      <text class="label">品牌</text>
+      <text class="value">{{product.brand || '-'}}</text>
+    </view>
+    <view class="row">
+      <text class="label">单位</text>
+      <text class="value">{{product.unit || '件'}}</text>
+    </view>
+    <view class="row">
+      <text class="label">状态</text>
+      <text class="value {{statusClass}}">{{statusText}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">价格</view>
+    <view class="row">
+      <text class="label">进价</text>
+      <text class="value">¥ {{product.purchase_price || '0.00'}}</text>
+    </view>
+    <view class="row">
+      <text class="label">售价</text>
+      <text class="value">¥ {{product.sale_price || '0.00'}}</text>
+    </view>
+  </view>
+
+  <view class="card stock-card">
+    <view class="card-title">库存</view>
+    <view class="row">
+      <text class="label">当前库存</text>
+      <text class="value {{stockClass}}">{{stockText}} {{product.unit || '件'}}</text>
+    </view>
+    <view class="row">
+      <text class="label">最低/最高库存</text>
+      <text class="value">{{minStockText}} / {{maxStockText}}</text>
+    </view>
+    <view class="warn-tip" wx:if="{{showWarnTip}}">库存低于预警值，请及时补货</view>
+  </view>
+
+  <view class="actions">
+    <button class="btn btn-primary" bindtap="onEdit">编辑</button>
+    <button class="btn btn-danger" wx:if="{{isAdmin}}" bindtap="onDelete">删除</button>
+  </view>
+
+  <view class="link-row" bindtap="onLogs">
+    <text>库存变动记录</text>
+    <text class="arrow">›</text>
+  </view>
+</view>
