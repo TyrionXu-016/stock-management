@@ -98,3 +98,14 @@ page {
 .arrow {
   font-size: 36rpx;
 }
+
+.cover-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cover-img {
+  display: block;
+  width: 100%;
+  max-height: 400rpx;
+}

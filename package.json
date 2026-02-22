@@ -1,0 +1,27 @@
+{
+  "name": "stockmanager",
+  "version": "1.0.0",
+  "description": "一个功能完善的库存管理微信小程序，帮助用户高效管理商品库存、入库出库记录等业务。",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TyrionXu-016/stock-management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TyrionXu-016/stock-management/issues"
+  },
+  "homepage": "https://github.com/TyrionXu-016/stock-management#readme",
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}

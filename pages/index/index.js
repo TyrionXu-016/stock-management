@@ -12,11 +12,11 @@ Page({
       pending_outbound_count: 0,
     },
     menus: [
-      { title: '商品管理', icon: 'box', path: '/pages/product/list/list', color: '#0f766e' },
-      { title: '入库管理', icon: 'down', path: '/pages/inbound/list/list', color: '#059669' },
-      { title: '出库管理', icon: 'up', path: '/pages/outbound/list/list', color: '#0284c7' },
-      { title: '库存监控', icon: 'chart', path: '/pages/inventory/overview/overview', color: '#7c3aed' },
-      { title: '报表统计', icon: 'stats', path: '/pages/report/overview/overview', color: '#c2410c' },
+      { title: '商品管理', icon: '/assets/icons/product.png', path: '/pages/product/list/list', isTab: true },
+      { title: '入库管理', icon: '/assets/icons/inbound.png', path: '/pages/inbound/list/list', isTab: true, tab: 'inbound' },
+      { title: '出库管理', icon: '/assets/icons/outbound.png', path: '/pages/inbound/list/list', isTab: true, tab: 'outbound' },
+      { title: '库存监控', icon: '/assets/icons/inventory.png', path: '/pages/inventory/overview/overview' },
+      { title: '报表统计', icon: '/assets/icons/report.png', path: '/pages/report/overview/overview' },
     ],
   },
 
@@ -67,12 +67,19 @@ Page({
   },
 
   onMenuTap(e) {
-    const path = e.currentTarget.dataset.path
-    if (!path) return
-    // 第二阶段起才有这些页面，暂时提示
-    wx.navigateTo({
-      url: path,
-      fail: () => wx.showToast({ title: '功能开发中', icon: 'none' }),
-    })
+    const item = e.currentTarget.dataset.item
+    if (!item || !item.path) return
+    getApp().globalData.inboundInitialTab = item.tab || null
+    if (item.isTab) {
+      wx.switchTab({
+        url: item.path,
+        fail: () => wx.showToast({ title: '页面跳转失败', icon: 'none' }),
+      })
+    } else {
+      wx.navigateTo({
+        url: item.path,
+        fail: () => wx.showToast({ title: '页面跳转失败', icon: 'none' }),
+      })
+    }
   },
 })

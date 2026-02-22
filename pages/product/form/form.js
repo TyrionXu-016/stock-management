@@ -1,6 +1,7 @@
 // pages/product/form/form.js
 const productApi = require('../../../api/product')
 const categoryApi = require('../../../api/category')
+const { uploadImage } = require('../../../utils/upload')
 
 Page({
   data: {
@@ -18,6 +19,7 @@ Page({
       category_id: null,
       brand: '',
       unit: '件',
+      cover_image: '',
       purchase_price: '',
       sale_price: '',
       min_stock: '',
@@ -57,6 +59,7 @@ Page({
         category_id: p.category_id,
         brand: p.brand || '',
         unit: p.unit || '件',
+        cover_image: p.cover_image || '',
         purchase_price: p.purchase_price != null ? String(p.purchase_price) : '',
         sale_price: p.sale_price != null ? String(p.sale_price) : '',
         min_stock: p.min_stock != null ? String(p.min_stock) : '',
@@ -95,6 +98,29 @@ Page({
     this.setData({ 'form.unit': unit, unitIndex: idx })
   },
 
+  onChooseImage() {
+    wx.chooseImage({
+      count: 1,
+      sourceType: ['album', 'camera'],
+      success: async (res) => {
+        const tempFilePath = res.tempFilePaths && res.tempFilePaths[0]
+        if (!tempFilePath) return
+        wx.showLoading({ title: '上传中...' })
+        try {
+          const url = await uploadImage(tempFilePath)
+          this.setData({ 'form.cover_image': url })
+          wx.showToast({ title: '上传成功', icon: 'success' })
+        } catch (e) {
+          wx.showToast({ title: e.message || '上传失败', icon: 'none' })
+        }
+      },
+    })
+  },
+
+  onDelImage() {
+    this.setData({ 'form.cover_image': '' })
+  },
+
   _validate() {
     const { form, isEdit } = this.data
     if (!form.name || !form.name.trim()) {
@@ -129,6 +155,7 @@ Page({
       category_id: form.category_id || undefined,
       brand: (form.brand || '').trim(),
       unit: form.unit || '件',
+      cover_image: form.cover_image || undefined,
       purchase_price: form.purchase_price ? parseFloat(form.purchase_price) : undefined,
       sale_price: form.sale_price ? parseFloat(form.sale_price) : undefined,
       min_stock: form.min_stock ? parseInt(form.min_stock, 10) : undefined,

@@ -31,6 +31,15 @@ Page({
     this._loadList(true)
   },
 
+  onShow() {
+    if (this._listShown) {
+      this.setData({ page: 1, hasMore: true })
+      this._loadList(true)
+    } else {
+      this._listShown = true
+    }
+  },
+
   onPullDownRefresh() {
     this.setData({ page: 1, hasMore: true })
     this._loadList(true).finally(() => wx.stopPullDownRefresh())

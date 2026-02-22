@@ -3,7 +3,7 @@ API 路由
 """
 from django.urls import path
 
-from .views import auth
+from .views import auth, upload
 from .views.user import profile
 from .views import report
 from .views import category, product
@@ -26,6 +26,9 @@ urlpatterns = [
     # 分类
     path('categories', category.categories),
     path('categories/<int:pk>', category.category_detail),
+
+    # 上传
+    path('upload/image', upload.upload_image),
 
     # 商品
     path('products', product.products),

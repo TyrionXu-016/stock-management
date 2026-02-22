@@ -87,6 +87,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# 媒体文件（用户上传）
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+# 小程序需 HTTPS，生产环境请配置为实际域名
+MEDIA_BASE_URL = os.environ.get('MEDIA_BASE_URL', 'https://stock.tyrion.space')
+
 # 微信小程序
 WECHAT_APPID = os.environ.get('WECHAT_APPID', '')
 WECHAT_SECRET = os.environ.get('WECHAT_SECRET', '')

@@ -26,6 +26,19 @@
       </picker>
     </view>
     <view class="group">
+      <view class="label">商品图片</view>
+      <view class="image-upload">
+        <view class="image-preview" wx:if="{{form.cover_image}}">
+          <image src="{{form.cover_image}}" mode="aspectFill" class="preview-img" />
+          <view class="del-btn" bindtap="onDelImage">×</view>
+        </view>
+        <view class="upload-btn" wx:else bindtap="onChooseImage">
+          <text class="upload-icon">+</text>
+          <text class="upload-text">上传图片</text>
+        </view>
+      </view>
+    </view>
+    <view class="group">
       <view class="label">品牌</view>
       <input class="input" placeholder="请输入品牌" value="{{form.brand}}" data-field="brand" bindinput="onInput" />
     </view>

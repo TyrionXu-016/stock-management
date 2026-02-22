@@ -4,5 +4,5 @@
  */
 module.exports = {
   // API 基础路径，开发时可用开发工具「不校验合法域名」进行调试
-  baseUrl: 'http://127.0.0.1:8000',
+  baseUrl: 'https://stock.tyrion.space',
 }

@@ -61,6 +61,8 @@ def _product_from_body(body, is_create=False):
     if not is_create and 'status' in body:
         s = body.get('status')
         data['status'] = 1 if s is not None and int(s) == 1 else 2
+    if is_create or 'cover_image' in body:
+        data['cover_image'] = (body.get('cover_image') or '')[:500] or None
     return data
 
 

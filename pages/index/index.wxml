@@ -34,11 +34,11 @@
         wx:for="{{menus}}"
         wx:key="title"
         class="menu-item"
-        data-path="{{item.path}}"
+        data-item="{{item}}"
         bindtap="onMenuTap"
       >
-        <view class="menu-icon" style="background: {{item.color}}20; color: {{item.color}}">
-          <text class="icon-text">{{item.title.charAt(0)}}</text>
+        <view class="menu-icon">
+          <image class="menu-icon-img" src="{{item.icon}}" mode="aspectFit" />
         </view>
         <text class="menu-text">{{item.title}}</text>
       </view>

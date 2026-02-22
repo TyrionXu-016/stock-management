@@ -1,4 +1,7 @@
 <view class="page" wx:if="{{product}}">
+  <view class="card cover-card" wx:if="{{product.cover_image}}">
+    <image src="{{product.cover_image}}" mode="aspectFit" class="cover-img" />
+  </view>
   <view class="card info-card">
     <view class="card-title">基础信息</view>
     <view class="row">

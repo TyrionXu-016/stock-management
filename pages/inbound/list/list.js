@@ -37,6 +37,21 @@ Page({
   },
 
   onShow() {
+    const initialTab = getApp().globalData.inboundInitialTab
+    getApp().globalData.inboundInitialTab = null
+    if (initialTab === 'outbound') {
+      this.setData({
+        tab: 'outbound',
+        addBtnText: '新建出库',
+        emptyText: '暂无出库单',
+        tabActiveInbound: '',
+        tabActiveOutbound: 'active',
+        page: 1,
+        hasMore: true,
+      })
+      this._loadList(true)
+      return
+    }
     this._loadList(true)
   },
 

@@ -109,11 +109,12 @@ page {
   align-items: center;
   justify-content: center;
   margin-bottom: 16rpx;
+  overflow: hidden;
 }
 
-.icon-text {
-  font-size: 36rpx;
-  font-weight: 600;
+.menu-icon-img {
+  width: 100%;
+  height: 100%;
 }
 
 .menu-text {

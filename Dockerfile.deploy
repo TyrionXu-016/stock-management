@@ -1,0 +1,19 @@
+# 直接部署用：代码内嵌，无需 git 拉取
+# 国内网络可配置 daemon.json 的 registry-mirrors，或改用可访问的镜像
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# 复制依赖并安装
+COPY backend/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 复制后端代码
+COPY backend/ .
+
+EXPOSE 8800
+
+# 迁移 + 启动（.env 通过挂载注入）
+CMD python manage.py migrate --noinput 2>/dev/null || true && \
+    exec python manage.py runserver 0.0.0.0:8800

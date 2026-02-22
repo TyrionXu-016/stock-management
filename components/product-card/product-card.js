@@ -29,6 +29,12 @@ Component({
     },
   },
   methods: {
+    onImageError(e) {
+      console.error('[product-card] 图片加载失败', e.detail, this.properties.product?.cover_image)
+    },
+    onImageLoad() {
+      // 调试用：图片加载成功
+    },
     onTap() {
       const { product } = this.properties
       if (product && product.id) {

@@ -1,4 +1,8 @@
 <view class="product-card {{cardClass}}" bindtap="onTap">
+  <view class="thumb-wrap">
+    <image wx:if="{{product.cover_image}}" src="{{product.cover_image}}" class="thumb" mode="aspectFill" binderror="onImageError" bindload="onImageLoad" />
+    <view class="thumb-placeholder" wx:else>无图</view>
+  </view>
   <view class="main">
     <view class="name">{{product.name || '-'}}</view>
     <view class="meta">

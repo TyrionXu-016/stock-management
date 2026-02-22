@@ -1,7 +1,15 @@
 """
 API 数据模型，对应现有数据库表结构（managed=False）
 """
+import json
 from django.db import models
+
+
+def _https_url(url):
+    """小程序要求 HTTPS，将 http 转为 https"""
+    if url and url.startswith('http://'):
+        return 'https://' + url[7:]
+    return url
 
 
 class Category(models.Model):
@@ -43,6 +51,7 @@ class Product(models.Model):
     stock = models.IntegerField(default=0)
     min_stock = models.IntegerField(default=0)
     max_stock = models.IntegerField(default=0)
+    cover_image = models.CharField(max_length=500, null=True, blank=True, db_column='cover_image')
     status = models.SmallIntegerField(default=1)  # 1:正常 2:下架
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
@@ -72,6 +81,7 @@ class Product(models.Model):
             'stock': self.stock,
             'min_stock': self.min_stock,
             'max_stock': self.max_stock,
+            'cover_image': _https_url(self.cover_image) if self.cover_image else None,
             'status': self.status,
             'create_time': self.create_time.strftime('%Y-%m-%d %H:%M:%S') if self.create_time else None,
             'update_time': self.update_time.strftime('%Y-%m-%d %H:%M:%S') if self.update_time else None,
