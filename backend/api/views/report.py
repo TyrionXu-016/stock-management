@@ -42,9 +42,11 @@ def overview(request):
         cursor.execute('SELECT COUNT(*) FROM t_product WHERE status = 1')
         product_count = cursor.fetchone()[0] or 0
 
-        cursor.execute(
-            'SELECT COUNT(*) FROM t_product WHERE status = 1 AND stock <= min_stock AND min_stock > 0'
-        )
+        cursor.execute("""
+            SELECT COUNT(*) FROM t_product_sku s
+            INNER JOIN t_product p ON p.id = s.product_id
+            WHERE p.status = 1 AND s.min_stock > 0 AND s.stock <= s.min_stock
+        """)
         warning_count = cursor.fetchone()[0] or 0
 
         cursor.execute('SELECT COUNT(*) FROM t_inbound_order WHERE status = 1')
@@ -53,9 +55,11 @@ def overview(request):
         cursor.execute('SELECT COUNT(*) FROM t_outbound_order WHERE status = 1')
         pending_outbound_count = cursor.fetchone()[0] or 0
 
-        cursor.execute(
-            'SELECT COALESCE(SUM(p.stock * p.purchase_price), 0) FROM t_product p WHERE p.status = 1'
-        )
+        cursor.execute("""
+            SELECT COALESCE(SUM(s.stock * p.purchase_price), 0)
+            FROM t_product_sku s INNER JOIN t_product p ON p.id = s.product_id
+            WHERE p.status = 1
+        """)
         total_stock_value = float(cursor.fetchone()[0] or 0)
 
         cursor.execute("""
@@ -242,13 +246,18 @@ def report_turnover(request):
         """, [start_date, end_date])
         in_map = {r[0]: r[1] for r in cursor.fetchall()}
 
-    products = {p.id: p for p in Product.objects.filter(status=1)}
+    from django.db.models import Sum
+    from ..models import ProductSku
+    pid_list = [r[0] for r in out_rows]
+    sku_totals = {
+        r['product_id']: int(r['total'] or 0)
+        for r in ProductSku.objects.filter(product_id__in=pid_list).values('product_id').annotate(total=Sum('stock'))
+    }
     data = []
     for pid, pname, out_qty in out_rows:
         out_qty = int(out_qty or 0)
-        p = products.get(pid)
         inbound_qty = int(in_map.get(pid, 0) or 0)
-        current = (p.stock if p else 0)
+        current = int(sku_totals.get(pid) or 0)
         start_stock = current - inbound_qty + out_qty
         avg_stock = (start_stock + current) / 2.0
         rate = round(out_qty / avg_stock, 2) if avg_stock > 0 else 0

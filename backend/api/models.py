@@ -39,7 +39,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    """商品表 t_product"""
+    """商品表 t_product（款/SPU，库存按尺码在 t_product_sku）"""
     sku_code = models.CharField(max_length=50, db_index=True)
     name = models.CharField(max_length=200)
     spec = models.CharField(max_length=100, null=True, blank=True)
@@ -48,7 +48,7 @@ class Product(models.Model):
     unit = models.CharField(max_length=20, default='件')
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    stock = models.IntegerField(default=0)
+    stock = models.IntegerField(default=0)  # 兼容旧数据；有尺码时以 t_product_sku 汇总为准
     min_stock = models.IntegerField(default=0)
     max_stock = models.IntegerField(default=0)
     cover_image = models.CharField(max_length=500, null=True, blank=True, db_column='cover_image')
@@ -60,14 +60,18 @@ class Product(models.Model):
         managed = False
         db_table = 't_product'
 
-    def to_dict(self, category_name=None):
+    def to_dict(self, category_name=None, include_skus=False):
         if category_name is None and self.category_id:
             try:
                 cat = Category.objects.get(pk=self.category_id)
                 category_name = cat.name
             except Category.DoesNotExist:
                 category_name = None
-        return {
+        skus = list(ProductSku.objects.filter(product_id=self.id).order_by('size'))
+        total_stock = sum(s.stock for s in skus) if skus else self.stock
+        total_min = sum(s.min_stock for s in skus) if skus else self.min_stock
+        total_max = sum(s.max_stock for s in skus) if skus else self.max_stock
+        d = {
             'id': self.id,
             'sku_code': self.sku_code,
             'name': self.name,
@@ -78,13 +82,42 @@ class Product(models.Model):
             'unit': self.unit,
             'purchase_price': f'{float(self.purchase_price or 0):.2f}',
             'sale_price': f'{float(self.sale_price or 0):.2f}',
-            'stock': self.stock,
-            'min_stock': self.min_stock,
-            'max_stock': self.max_stock,
+            'stock': total_stock,
+            'min_stock': total_min,
+            'max_stock': total_max,
             'cover_image': _https_url(self.cover_image) if self.cover_image else None,
             'status': self.status,
             'create_time': self.create_time.strftime('%Y-%m-%d %H:%M:%S') if self.create_time else None,
             'update_time': self.update_time.strftime('%Y-%m-%d %H:%M:%S') if self.update_time else None,
+        }
+        if include_skus:
+            d['skus'] = [s.to_dict() for s in skus]
+        return d
+
+
+class ProductSku(models.Model):
+    """商品尺码表 t_product_sku（鞋码维度库存）"""
+    product_id = models.BigIntegerField(db_column='product_id')
+    size = models.CharField(max_length=20)  # 鞋码：38,39,40 或 均码
+    stock = models.IntegerField(default=0)
+    min_stock = models.IntegerField(default=0)
+    max_stock = models.IntegerField(default=0)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        managed = False
+        db_table = 't_product_sku'
+        unique_together = (('product_id', 'size'),)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'product_id': self.product_id,
+            'size': self.size,
+            'stock': self.stock,
+            'min_stock': self.min_stock,
+            'max_stock': self.max_stock,
         }
 
 
@@ -109,6 +142,7 @@ class InboundItem(models.Model):
     """入库单明细表 t_inbound_item"""
     inbound_id = models.BigIntegerField(db_column='inbound_id')
     product_id = models.BigIntegerField(db_column='product_id')
+    sku_id = models.BigIntegerField(null=True, blank=True, db_column='sku_id')
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -141,6 +175,7 @@ class OutboundItem(models.Model):
     """出库单明细表 t_outbound_item"""
     outbound_id = models.BigIntegerField(db_column='outbound_id')
     product_id = models.BigIntegerField(db_column='product_id')
+    sku_id = models.BigIntegerField(null=True, blank=True, db_column='sku_id')
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -169,6 +204,7 @@ class InventoryCheckItem(models.Model):
     """盘点明细表 t_inventory_check_item"""
     check_id = models.BigIntegerField(db_column='check_id')
     product_id = models.BigIntegerField(db_column='product_id')
+    sku_id = models.BigIntegerField(null=True, blank=True, db_column='sku_id')
     book_stock = models.IntegerField(default=0)
     actual_stock = models.IntegerField(default=0)
     diff_quantity = models.IntegerField(default=0)
@@ -182,6 +218,7 @@ class InventoryCheckItem(models.Model):
 class StockLog(models.Model):
     """库存变动记录表 t_stock_log"""
     product_id = models.BigIntegerField(db_column='product_id')
+    sku_id = models.BigIntegerField(null=True, blank=True, db_column='sku_id')
     change_type = models.SmallIntegerField()  # 1:入库 2:出库 3:盘点
     change_quantity = models.IntegerField()
     before_stock = models.IntegerField(default=0)

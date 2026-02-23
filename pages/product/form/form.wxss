@@ -127,3 +127,59 @@ page {
   color: #fff;
   border: none;
 }
+
+.section-title {
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: none;
+  padding-bottom: 12rpx;
+}
+
+.sku-list {
+  margin: 0 -32rpx;
+}
+
+.sku-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  padding: 16rpx 32rpx;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.sku-row .input {
+  flex: none;
+}
+
+.sku-size {
+  width: 100rpx;
+}
+
+.sku-num {
+  width: 80rpx;
+}
+
+.sku-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 16rpx;
+}
+
+.link {
+  color: #0f766e;
+  font-size: 26rpx;
+}
+
+.link.danger {
+  color: #dc2626;
+}
+
+.btn-add-sku {
+  background: #f8fafc;
+  color: #64748b;
+  border: 2rpx dashed #e2e8f0;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  padding: 20rpx;
+}

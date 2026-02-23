@@ -12,8 +12,8 @@
       <view class="add-btn" bindtap="onAddProduct">+ 添加商品</view>
     </view>
     <view class="item-list" wx:if="{{items.length > 0}}">
-      <view class="item" wx:for="{{items}}" wx:key="product_id">
-        <view class="item-name">{{item.product_name}}</view>
+      <view class="item" wx:for="{{items}}" wx:key="sku_id">
+        <view class="item-name">{{item.product_name}} <text class="size-tag" wx:if="{{item.size}}">{{item.size}}码</text></view>
         <view class="item-row">
           <text>账面库存</text>
           <text class="readonly">{{item.book_stock}}</text>

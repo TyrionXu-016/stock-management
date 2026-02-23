@@ -16,8 +16,8 @@
       />
     </view>
     <view class="group">
-      <view class="label">规格</view>
-      <input class="input" placeholder="如 500g/袋" value="{{form.spec}}" data-field="spec" bindinput="onInput" />
+      <view class="label">规格备注</view>
+      <input class="input" placeholder="可选，如 500g/袋" value="{{form.spec}}" data-field="spec" bindinput="onInput" />
     </view>
     <view class="group">
       <view class="label">分类</view>
@@ -56,13 +56,27 @@
       <view class="label">售价</view>
       <input class="input" type="digit" placeholder="0.00" value="{{form.sale_price}}" data-field="sale_price" bindinput="onInput" />
     </view>
-    <view class="group">
-      <view class="label">最低库存</view>
-      <input class="input" type="number" placeholder="0" value="{{form.min_stock}}" data-field="min_stock" bindinput="onInput" />
+    <view class="group section-title">尺码与库存（每码单独库存）</view>
+    <view class="sku-list" wx:for="{{skus}}" wx:key="id">
+      <view class="sku-row">
+        <input class="input sku-size" placeholder="鞋码" value="{{item.size}}" data-index="{{index}}" data-field="size" bindinput="onSkuInput" disabled="{{isEdit && item.id}}" />
+        <input class="input sku-num" type="number" placeholder="库存" value="{{item.stock}}" data-index="{{index}}" data-field="stock" bindinput="onSkuInput" />
+        <input class="input sku-num" type="number" placeholder="最低" value="{{item.min_stock}}" data-index="{{index}}" data-field="min_stock" bindinput="onSkuInput" />
+        <input class="input sku-num" type="number" placeholder="最高" value="{{item.max_stock}}" data-index="{{index}}" data-field="max_stock" bindinput="onSkuInput" />
+        <view class="sku-actions" wx:if="{{isEdit && item.id && item.id > 0}}">
+          <text class="link" bindtap="onSaveSku" data-index="{{index}}">保存</text>
+          <text class="link danger" wx:if="{{skus.length > 1}}" bindtap="onDelSku" data-index="{{index}}">删</text>
+        </view>
+        <view class="sku-actions" wx:elif="{{isEdit && !item.id}}">
+          <text class="link" bindtap="onSaveNewSku" data-index="{{index}}">添加</text>
+        </view>
+        <view class="sku-actions" wx:elif="{{!isEdit}}">
+          <text class="link danger" wx:if="{{skus.length > 1}}" bindtap="onDelSku" data-index="{{index}}">删</text>
+        </view>
+      </view>
     </view>
     <view class="group">
-      <view class="label">最高库存</view>
-      <input class="input" type="number" placeholder="0" value="{{form.max_stock}}" data-field="max_stock" bindinput="onInput" />
+      <button class="btn-add-sku" bindtap="onAddSku">+ 添加尺码</button>
     </view>
   </view>
 

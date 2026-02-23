@@ -13,3 +13,4 @@ page { background: #f1f5f9; }
 .nums .gap { color: #f59e0b; font-weight: 500; }
 .btn-replenish { padding: 16rpx 32rpx; background: #0f766e; color: #fff; border-radius: 32rpx; font-size: 26rpx; }
 .empty { padding: 120rpx 0; text-align: center; font-size: 28rpx; color: #94a3b8; }
+.size-tag { color: #64748b; font-weight: normal; }

@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 
 from ..models import (
-    OutboundOrder, OutboundItem, Product, StockLog, User,
+    OutboundOrder, OutboundItem, Product, ProductSku, StockLog, User,
 )
 from ..utils.response import success, error, paginated
 from ..utils.order_no import gen_outbound_order_no
@@ -49,12 +49,18 @@ def _outbound_to_dict(order, items=None, operator_name=None):
         'items': [],
     }
     if items is not None:
-        products = {p.id: p for p in Product.objects.filter(id__in=[i.product_id for i in items])}
+        product_ids = [i.product_id for i in items]
+        sku_ids = [i.sku_id for i in items if i.sku_id]
+        products = {p.id: p for p in Product.objects.filter(id__in=product_ids)} if product_ids else {}
+        skus = {s.id: s for s in ProductSku.objects.filter(id__in=sku_ids)} if sku_ids else {}
         for it in items:
             p = products.get(it.product_id)
+            sku = skus.get(it.sku_id) if it.sku_id else None
             d['items'].append({
                 'id': it.id,
                 'product_id': it.product_id,
+                'sku_id': it.sku_id,
+                'size': sku.size if sku else None,
                 'product_name': p.name if p else '',
                 'sku_code': p.sku_code if p else '',
                 'quantity': it.quantity,
@@ -132,29 +138,45 @@ def _create_outbound(request):
     receiver = (body.get('receiver') or '')[:100]
     remark = body.get('remark') or ''
 
-    # 校验商品存在、库存充足并计算
+    # 校验：每条明细需 sku_id，并校验该尺码库存
     total_qty = 0
     total_amt = Decimal('0')
     validated_items = []
     for it in items_data:
+        sku_id = _int_param(it.get('sku_id'))
         product_id = _int_param(it.get('product_id'))
-        if not product_id:
-            return error(422, '商品ID不能为空')
-        try:
-            product = Product.objects.get(pk=product_id)
-        except Product.DoesNotExist:
-            return error(422, f'商品 ID {product_id} 不存在')
+        if sku_id:
+            try:
+                sku = ProductSku.objects.get(pk=sku_id)
+                product = Product.objects.get(pk=sku.product_id)
+                product_id = product.id
+            except (ProductSku.DoesNotExist, Product.DoesNotExist):
+                return error(422, f'尺码 ID {sku_id} 不存在')
+        elif product_id:
+            try:
+                product = Product.objects.get(pk=product_id)
+                first_sku = ProductSku.objects.filter(product_id=product_id).order_by('id').first()
+                if not first_sku:
+                    return error(422, f'商品「{product.name}」尚未配置尺码')
+                sku_id = first_sku.id
+                sku = first_sku
+            except Product.DoesNotExist:
+                return error(422, f'商品 ID {product_id} 不存在')
+        else:
+            return error(422, '每条明细需提供 sku_id 或 product_id')
+        sku = ProductSku.objects.get(pk=sku_id)
         qty = _int_param(it.get('quantity'), 0)
         if qty <= 0:
             return error(422, f'商品 {product.name} 数量必须大于 0')
-        if product.stock < qty:
-            return error(422, f'库存不足，商品「{product.name}」当前库存 {product.stock}，请求数量 {qty}')
+        if sku.stock < qty:
+            return error(422, f'库存不足，商品「{product.name}」尺码 {sku.size} 当前库存 {sku.stock}，请求数量 {qty}')
         price = _decimal_param(it.get('unit_price'))
         sub_total = Decimal(str(qty)) * price
         total_qty += qty
         total_amt += sub_total
         validated_items.append({
             'product_id': product_id,
+            'sku_id': sku_id,
             'product_name': product.name,
             'quantity': qty,
             'unit_price': price,
@@ -176,6 +198,7 @@ def _create_outbound(request):
             OutboundItem.objects.create(
                 outbound_id=order.id,
                 product_id=v['product_id'],
+                sku_id=v['sku_id'],
                 quantity=v['quantity'],
                 unit_price=v['unit_price'],
                 total_price=v['total_price'],
@@ -215,19 +238,35 @@ def update_outbound_status(request, pk):
         with transaction.atomic():
             items = list(OutboundItem.objects.filter(outbound_id=order.id))
             for it in items:
-                product = Product.objects.get(pk=it.product_id)
-                if product.stock < it.quantity:
-                    return error(422, f'库存不足，商品「{product.name}」当前库存 {product.stock}，出库数量 {it.quantity}')
+                if it.sku_id:
+                    sku = ProductSku.objects.get(pk=it.sku_id)
+                    if sku.stock < it.quantity:
+                        product = Product.objects.get(pk=sku.product_id)
+                        return error(422, f'库存不足，商品「{product.name}」尺码 {sku.size} 当前库存 {sku.stock}，出库数量 {it.quantity}')
+                else:
+                    product = Product.objects.get(pk=it.product_id)
+                    if product.stock < it.quantity:
+                        return error(422, f'库存不足，商品「{product.name}」当前库存 {product.stock}，出库数量 {it.quantity}')
             order.status = 2
             order.save(update_fields=['status', 'update_time'])
             for it in items:
-                product = Product.objects.get(pk=it.product_id)
-                before = product.stock
-                after = before - it.quantity
-                product.stock = after
-                product.save(update_fields=['stock', 'update_time'])
+                if it.sku_id:
+                    sku = ProductSku.objects.get(pk=it.sku_id)
+                    before = sku.stock
+                    after = before - it.quantity
+                    sku.stock = after
+                    sku.save(update_fields=['stock', 'update_time'])
+                    product_id = sku.product_id
+                else:
+                    product = Product.objects.get(pk=it.product_id)
+                    before = product.stock
+                    after = before - it.quantity
+                    product.stock = after
+                    product.save(update_fields=['stock', 'update_time'])
+                    product_id = product.id
                 StockLog.objects.create(
-                    product_id=it.product_id,
+                    product_id=product_id,
+                    sku_id=it.sku_id,
                     change_type=2,
                     change_quantity=-it.quantity,
                     before_stock=before,

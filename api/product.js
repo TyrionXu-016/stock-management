@@ -62,10 +62,56 @@ function remove(id) {
   })
 }
 
+/**
+ * 获取商品尺码列表
+ */
+function getSkus(productId) {
+  return request({
+    url: `/api/products/${productId}/skus`,
+    method: 'GET',
+  })
+}
+
+/**
+ * 添加尺码
+ */
+function createSku(productId, data) {
+  return request({
+    url: `/api/products/${productId}/skus`,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 更新尺码
+ */
+function updateSku(productId, skuId, data) {
+  return request({
+    url: `/api/products/${productId}/skus/${skuId}`,
+    method: 'PUT',
+    data,
+  })
+}
+
+/**
+ * 删除尺码
+ */
+function deleteSku(productId, skuId) {
+  return request({
+    url: `/api/products/${productId}/skus/${skuId}`,
+    method: 'DELETE',
+  })
+}
+
 module.exports = {
   getList,
   getDetail,
   create,
   update,
   remove,
+  getSkus,
+  createSku,
+  updateSku,
+  deleteSku,
 }

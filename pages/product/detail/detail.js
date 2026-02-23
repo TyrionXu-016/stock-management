@@ -28,17 +28,14 @@ Page({
     try {
       const product = await productApi.getDetail(this.data.id)
       const stock = product.stock != null ? product.stock : 0
-      const minStock = product.min_stock != null ? product.min_stock : 0
-      const maxStock = product.max_stock != null ? product.max_stock : 0
-      const showWarn = stock <= minStock
+      const skus = product.skus || []
+      const showWarn = skus.some((s) => s.min_stock > 0 && s.stock <= s.min_stock)
       this.setData({
         product,
         statusText: product.status === 2 ? '已下架' : '正常',
         statusClass: product.status === 2 ? 'offline' : '',
         stockText: String(stock),
         stockClass: showWarn ? 'warn' : '',
-        minStockText: String(minStock),
-        maxStockText: String(maxStock),
         showWarnTip: showWarn,
       })
     } catch (e) {

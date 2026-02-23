@@ -33,6 +33,8 @@ urlpatterns = [
     # 商品
     path('products', product.products),
     path('products/<int:pk>', product.product_detail),
+    path('products/<int:pk>/skus/<int:sku_pk>', product.product_sku_detail),
+    path('products/<int:pk>/skus', product.product_skus),
 
     # 入库
     path('inbound', inbound.inbound_list_or_create),

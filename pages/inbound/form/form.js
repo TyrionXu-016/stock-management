@@ -32,21 +32,58 @@ Page({
     wx.navigateTo({ url: '/pages/product/select/select' })
   },
 
-  _addProduct(product) {
+  async _addProduct(product) {
     const items = [...this.data.items]
-    if (items.some((i) => i.product_id === product.id)) {
+    const productId = product.id
+    if (!product.sku_id && items.some((i) => i.product_id === productId)) {
       wx.showToast({ title: '已添加该商品', icon: 'none' })
       return
     }
-    items.push({
-      product_id: product.id,
-      product_name: product.name,
-      sku_code: product.sku_code,
-      quantity: 1,
-      unit_price: product.purchase_price || '0',
-      batch_no: '',
-      _total: '0.00',
-    })
+    try {
+      const detail = await productApi.getDetail(productId)
+      const skus = detail.skus || []
+      if (skus.length === 0) {
+        wx.showToast({ title: '该商品未配置尺码', icon: 'none' })
+        return
+      }
+      let sku, skuIndex
+      if (product.sku_id) {
+        skuIndex = skus.findIndex((s) => s.id === product.sku_id)
+        sku = skuIndex >= 0 ? skus[skuIndex] : skus[0]
+        skuIndex = skuIndex >= 0 ? skuIndex : 0
+      } else {
+        sku = skus[0]
+        skuIndex = 0
+      }
+      items.push({
+        product_id: productId,
+        sku_id: sku.id,
+        product_name: product.name || detail.name,
+        sku_code: product.sku_code || detail.sku_code,
+        size: sku.size,
+        skus,
+        _skuIndex: skuIndex,
+        quantity: 1,
+        unit_price: product.purchase_price || detail.purchase_price || '0',
+        batch_no: '',
+        _total: '0.00',
+      })
+      this._recalcItems(items)
+    } catch (e) {
+      wx.showToast({ title: e.message || '加载失败', icon: 'none' })
+    }
+  },
+
+  onSizePick(e) {
+    const index = parseInt(e.currentTarget.dataset.index, 10)
+    const idx = parseInt(e.detail.value, 10)
+    const items = [...this.data.items]
+    const item = items[index]
+    if (!item || !item.skus || !item.skus[idx]) return
+    const sku = item.skus[idx]
+    item.sku_id = sku.id
+    item.size = sku.size
+    item._skuIndex = idx
     this._recalcItems(items)
   },
 
@@ -101,6 +138,7 @@ Page({
         remark: (this.data.remark || '').trim(),
         items: items.map((i) => ({
           product_id: i.product_id,
+          sku_id: i.sku_id,
           quantity: parseInt(i.quantity, 10) || 0,
           unit_price: parseFloat(i.unit_price) || 0,
           batch_no: (i.batch_no || '').trim() || undefined,

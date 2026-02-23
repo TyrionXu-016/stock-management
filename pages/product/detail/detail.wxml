@@ -47,16 +47,24 @@
   </view>
 
   <view class="card stock-card">
-    <view class="card-title">库存</view>
-    <view class="row">
-      <text class="label">当前库存</text>
+    <view class="card-title">库存（按尺码）</view>
+    <view class="row total-row">
+      <text class="label">总库存</text>
       <text class="value {{stockClass}}">{{stockText}} {{product.unit || '件'}}</text>
     </view>
-    <view class="row">
-      <text class="label">最低/最高库存</text>
-      <text class="value">{{minStockText}} / {{maxStockText}}</text>
+    <view class="sku-table" wx:if="{{product.skus && product.skus.length}}">
+      <view class="sku-th">
+        <text>尺码</text>
+        <text>库存</text>
+        <text>最低/最高</text>
+      </view>
+      <view class="sku-tr" wx:for="{{product.skus}}" wx:key="id">
+        <text>{{item.size}}</text>
+        <text class="{{item.min_stock > 0 && item.stock <= item.min_stock ? 'warn' : ''}}">{{item.stock}}</text>
+        <text>{{item.min_stock}} / {{item.max_stock}}</text>
+      </view>
     </view>
-    <view class="warn-tip" wx:if="{{showWarnTip}}">库存低于预警值，请及时补货</view>
+    <view class="warn-tip" wx:if="{{showWarnTip}}">有尺码库存低于预警值，请及时补货</view>
   </view>
 
   <view class="actions">

@@ -43,6 +43,7 @@ Page({
     if (item && item.product_id) {
       getApp().globalData.pendingProductSelect = {
         id: item.product_id,
+        sku_id: item.sku_id,
         name: item.product_name,
         sku_code: item.sku_code,
         stock: item.stock,

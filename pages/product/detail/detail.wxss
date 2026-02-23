@@ -109,3 +109,27 @@ page {
   width: 100%;
   max-height: 400rpx;
 }
+
+.total-row {
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.sku-table {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+}
+
+.sku-th, .sku-tr {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.sku-th {
+  color: #64748b;
+}
+
+.sku-tr text.warn {
+  color: #f59e0b;
+}

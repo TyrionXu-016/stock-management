@@ -36,13 +36,13 @@
     <view class="list" wx:if="{{list.length > 0}}">
       <view
         wx:for="{{list}}"
-        wx:key="product_id"
+        wx:key="sku_id"
         class="item {{item._warnClass}}"
         data-item="{{item}}"
         bindtap="onItemTap"
       >
         <view class="item-main">
-          <text class="name">{{item.product_name}}</text>
+          <text class="name">{{item.product_name}}<text class="size-tag" wx:if="{{item.size}}"> {{item.size}}码</text></text>
           <text class="meta">SKU: {{item.sku_code}} · {{item.unit}}</text>
         </view>
         <view class="item-right">

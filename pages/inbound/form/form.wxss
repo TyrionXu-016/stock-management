@@ -24,3 +24,5 @@ page { background: #f1f5f9; }
 .btn { flex: 1; height: 88rpx; line-height: 88rpx; border-radius: 44rpx; font-size: 30rpx; }
 .btn-cancel { background: #fff; color: #64748b; border: 1rpx solid #e2e8f0; }
 .btn-submit { background: #0f766e; color: #fff; border: none; }
+.size-tag { color: #64748b; font-weight: normal; }
+.picker-value { color: #1e293b; }

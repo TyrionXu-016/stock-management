@@ -16,8 +16,14 @@
       <view class="add-btn" bindtap="onAddProduct">+ 添加商品</view>
     </view>
     <view class="item-list" wx:if="{{items.length > 0}}">
-      <view class="item" wx:for="{{items}}" wx:key="product_id">
-        <view class="item-name">{{item.product_name}} <text class="stock-hint">库存 {{item.stock}}</text></view>
+      <view class="item" wx:for="{{items}}" wx:key="sku_id">
+        <view class="item-name">{{item.product_name}} <text class="size-tag" wx:if="{{item.size}}">{{item.size}}码</text> <text class="stock-hint">库存 {{item.stock}}</text></view>
+        <view class="item-row" wx:if="{{item.skus && item.skus.length}}">
+          <text>尺码</text>
+          <picker mode="selector" range="{{item.skus}}" range-key="size" value="{{item._skuIndex}}" data-index="{{index}}" bindchange="onSizePick">
+            <view class="picker-value">{{item.size || '请选尺码'}}</view>
+          </picker>
+        </view>
         <view class="item-row">
           <text>数量</text>
           <input type="number" value="{{item.quantity}}" data-field="quantity" data-index="{{index}}" bindinput="onItemInput" />

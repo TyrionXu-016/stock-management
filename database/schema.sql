@@ -49,6 +49,20 @@ CREATE TABLE IF NOT EXISTS t_product (
   KEY idx_category (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 商品尺码表（鞋码维度库存）
+CREATE TABLE IF NOT EXISTS t_product_sku (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  product_id BIGINT NOT NULL,
+  size VARCHAR(20) NOT NULL COMMENT '鞋码，如 38,39,40 或 均码',
+  stock INT DEFAULT 0,
+  min_stock INT DEFAULT 0,
+  max_stock INT DEFAULT 0,
+  create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_product_size (product_id, size),
+  KEY idx_product (product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 入库单表
 CREATE TABLE IF NOT EXISTS t_inbound_order (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -69,13 +83,15 @@ CREATE TABLE IF NOT EXISTS t_inbound_item (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   inbound_id BIGINT NOT NULL,
   product_id BIGINT NOT NULL,
+  sku_id BIGINT DEFAULT NULL COMMENT '商品尺码ID',
   quantity INT NOT NULL,
   unit_price DECIMAL(10,2) DEFAULT 0,
   total_price DECIMAL(12,2) DEFAULT 0,
   batch_no VARCHAR(50) DEFAULT NULL,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   KEY idx_inbound (inbound_id),
-  KEY idx_product (product_id)
+  KEY idx_product (product_id),
+  KEY idx_sku (sku_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 出库单表
@@ -98,18 +114,21 @@ CREATE TABLE IF NOT EXISTS t_outbound_item (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   outbound_id BIGINT NOT NULL,
   product_id BIGINT NOT NULL,
+  sku_id BIGINT DEFAULT NULL COMMENT '商品尺码ID',
   quantity INT NOT NULL,
   unit_price DECIMAL(10,2) DEFAULT 0,
   total_price DECIMAL(12,2) DEFAULT 0,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   KEY idx_outbound (outbound_id),
-  KEY idx_product (product_id)
+  KEY idx_product (product_id),
+  KEY idx_sku (sku_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 库存变动记录表
 CREATE TABLE IF NOT EXISTS t_stock_log (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   product_id BIGINT NOT NULL,
+  sku_id BIGINT DEFAULT NULL COMMENT '商品尺码ID',
   change_type TINYINT NOT NULL COMMENT '1:入库 2:出库 3:盘点',
   change_quantity INT NOT NULL COMMENT '正数为增，负数为减',
   before_stock INT DEFAULT 0,
@@ -119,6 +138,7 @@ CREATE TABLE IF NOT EXISTS t_stock_log (
   remark VARCHAR(500) DEFAULT NULL,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   KEY idx_product (product_id),
+  KEY idx_sku (sku_id),
   KEY idx_create_time (create_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -139,10 +159,12 @@ CREATE TABLE IF NOT EXISTS t_inventory_check_item (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   check_id BIGINT NOT NULL,
   product_id BIGINT NOT NULL,
+  sku_id BIGINT DEFAULT NULL COMMENT '商品尺码ID',
   book_stock INT DEFAULT 0 COMMENT '账面库存',
   actual_stock INT DEFAULT 0 COMMENT '实际库存',
   diff_quantity INT DEFAULT 0 COMMENT '差异数量',
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   KEY idx_check (check_id),
-  KEY idx_product (product_id)
+  KEY idx_product (product_id),
+  KEY idx_sku (sku_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

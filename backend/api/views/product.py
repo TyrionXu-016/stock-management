@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 
-from ..models import Product, Category
+from ..models import Product, ProductSku, Category
 from ..utils.response import success, error, paginated
 
 
@@ -115,7 +115,7 @@ def product_detail(request, pk):
         return error(404, '商品不存在')
 
     if request.method == 'GET':
-        return success(obj.to_dict())
+        return success(obj.to_dict(include_skus=True))
     if request.method == 'PUT':
         if not getattr(request, 'current_user', None):
             return error(401, '未登录或 token 已失效')
@@ -145,8 +145,22 @@ def _create_product(request):
     if Product.objects.filter(sku_code=data['sku_code']).exists():
         return error(422, f'SKU {data["sku_code"]} 已存在')
 
+    skus_data = body.get('skus') or []
+    # 若无尺码则创建一条「均码」便于兼容
+    if not skus_data:
+        skus_data = [{'size': '均码', 'stock': 0, 'min_stock': 0, 'max_stock': 0}]
+
     obj = Product.objects.create(**data)
-    return success(obj.to_dict())
+    for s in skus_data:
+        size = (s.get('size') or '均码').strip() or '均码'
+        ProductSku.objects.create(
+            product_id=obj.id,
+            size=size[:20],
+            stock=_int_param(s.get('stock'), 0),
+            min_stock=_int_param(s.get('min_stock'), 0),
+            max_stock=_int_param(s.get('max_stock'), 0),
+        )
+    return success(obj.to_dict(include_skus=True))
 
 
 def _update_product(request, pk):
@@ -168,7 +182,80 @@ def _update_product(request, pk):
     for k, v in data.items():
         setattr(obj, k, v)
     obj.save()
-    return success(obj.to_dict())
+    return success(obj.to_dict(include_skus=True))
+
+
+@csrf_exempt
+@require_http_methods(['GET', 'POST'])
+def product_skus(request, pk):
+    """GET/POST /api/products/:id/skus 列表与新增尺码"""
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+        return error(404, '商品不存在')
+
+    if request.method == 'GET':
+        skus = list(ProductSku.objects.filter(product_id=pk).order_by('size'))
+        return success([s.to_dict() for s in skus])
+
+    if not getattr(request, 'current_user', None):
+        return error(401, '未登录或 token 已失效')
+    try:
+        body = json.loads(request.body) if request.body else {}
+    except json.JSONDecodeError:
+        return error(422, '参数格式错误')
+
+    size = (body.get('size') or '均码').strip() or '均码'
+    if ProductSku.objects.filter(product_id=pk, size=size).exists():
+        return error(422, f'尺码 {size} 已存在')
+
+    sku = ProductSku.objects.create(
+        product_id=pk,
+        size=size[:20],
+        stock=_int_param(body.get('stock'), 0),
+        min_stock=_int_param(body.get('min_stock'), 0),
+        max_stock=_int_param(body.get('max_stock'), 0),
+    )
+    return success(sku.to_dict())
+
+
+@csrf_exempt
+@require_http_methods(['GET', 'PUT', 'DELETE'])
+def product_sku_detail(request, pk, sku_pk):
+    """GET/PUT/DELETE /api/products/:id/skus/:sku_id"""
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+        return error(404, '商品不存在')
+    try:
+        sku = ProductSku.objects.get(pk=sku_pk, product_id=pk)
+    except ProductSku.DoesNotExist:
+        return error(404, '尺码不存在')
+
+    if request.method == 'GET':
+        return success(sku.to_dict())
+
+    if not getattr(request, 'current_user', None):
+        return error(401, '未登录或 token 已失效')
+
+    if request.method == 'PUT':
+        try:
+            body = json.loads(request.body) if request.body else {}
+        except json.JSONDecodeError:
+            return error(422, '参数格式错误')
+        if 'stock' in body:
+            sku.stock = _int_param(body['stock'], 0)
+        if 'min_stock' in body:
+            sku.min_stock = _int_param(body['min_stock'], 0)
+        if 'max_stock' in body:
+            sku.max_stock = _int_param(body['max_stock'], 0)
+        sku.save()
+        return success(sku.to_dict())
+
+    if request.current_user.role != 2:
+        return error(403, '需要管理员权限')
+    sku.delete()
+    return success()
 
 
 def _delete_product(request, pk):

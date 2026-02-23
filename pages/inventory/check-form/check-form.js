@@ -1,5 +1,6 @@
 // pages/inventory/check-form/check-form.js
 const inventoryApi = require('../../../api/inventory')
+const productApi = require('../../../api/product')
 
 Page({
   data: {
@@ -24,21 +25,35 @@ Page({
     wx.navigateTo({ url: '/pages/product/select/select' })
   },
 
-  _addProduct(product) {
+  async _addProduct(product) {
     const items = [...this.data.items]
     if (items.some((i) => i.product_id === product.id)) {
-      wx.showToast({ title: '已添加该商品', icon: 'none' })
+      wx.showToast({ title: '已添加该商品，请删除后重加', icon: 'none' })
       return
     }
-    const bookStock = product.stock != null ? product.stock : 0
-    items.push({
-      product_id: product.id,
-      product_name: product.name,
-      book_stock: bookStock,
-      actual_stock: bookStock,
-      _diff: 0,
-    })
-    this._recalcItems(items)
+    try {
+      const detail = await productApi.getDetail(product.id)
+      const skus = detail.skus || []
+      if (skus.length === 0) {
+        wx.showToast({ title: '该商品未配置尺码', icon: 'none' })
+        return
+      }
+      skus.forEach((sku) => {
+        const book = sku.stock != null ? sku.stock : 0
+        items.push({
+          product_id: product.id,
+          sku_id: sku.id,
+          product_name: product.name,
+          size: sku.size,
+          book_stock: book,
+          actual_stock: book,
+          _diff: 0,
+        })
+      })
+      this._recalcItems(items)
+    } catch (e) {
+      wx.showToast({ title: e.message || '加载失败', icon: 'none' })
+    }
   },
 
   onActualInput(e) {
@@ -82,6 +97,7 @@ Page({
         remark: (this.data.remark || '').trim(),
         items: items.map((i) => ({
           product_id: i.product_id,
+          sku_id: i.sku_id,
           book_stock: parseInt(i.book_stock, 10) || 0,
           actual_stock: parseInt(i.actual_stock, 10) || 0,
         })),
